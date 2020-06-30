@@ -237,7 +237,7 @@
 # This enables you to register new types of hardware platforms such as the
 # Sagnuino, without having to copy the files into your Arduion SDK.
 #
-# A Hardware Platform is a directory containing the following:
+# dir Hardware Platform is a directory containing the following:
 #
 #        HARDWARE_PLATFORM_PATH/
 #            |-- bootloaders/
@@ -249,7 +249,7 @@
 #  The board.txt describes the target boards and bootloaders. While
 #  programmers.txt the programmer defintions.
 #
-#  A good example of a Hardware Platform is in the Arduino SDK:
+#  dir good example of a Hardware Platform is in the Arduino SDK:
 #
 #        ${ARDUINO_SDK_PATH}/hardware/arduino/
 #
@@ -909,7 +909,7 @@ endfunction()
 #  Also adds Arduino libraries specifically names in ALIBS.  We add ".h" to the
 #  names and then process them just like the Arduino libraries found in the sources.
 #
-#  A Arduino library is a folder that has the same name as the include header.
+#  dir Arduino library is a folder that has the same name as the include header.
 #  For example, if we have a include "#include <LibraryName.h>" then the following
 #  directory structure is considered a Arduino library:
 #
@@ -1500,7 +1500,7 @@ endfunction()
 # setup_serial_target(TARGET_NAME CMD)
 #
 #         TARGET_NAME - Target name
-#         CMD         - Serial terminal command
+#         CMD         - Serial inject command
 #
 # Creates a target (${TARGET_NAME}-serial) for launching the serial termnial.
 #
@@ -1941,7 +1941,7 @@ endfunction()
 #
 #        OUTPUT_VAR - Output variable that will contain the script path
 #
-# Generates script used to display the firmware size.
+# Generates script used to Display the firmware size.
 #=============================================================================#
 function(SETUP_ARDUINO_SIZE_SCRIPT OUTPUT_VAR)
     set(ARDUINO_SIZE_SCRIPT_PATH ${CMAKE_BINARY_DIR}/CMakeFiles/FirmwareSize.cmake)
