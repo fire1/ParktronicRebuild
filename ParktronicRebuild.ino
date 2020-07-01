@@ -148,19 +148,20 @@ void loop() {
         if (pinState == LOW && gap > 20) {
 
             echoTravel = gap + debounceDelay;
+            float distance = (float) map(echoTravel, 1000, 4600, 2000, 8200) * 0.01;
 #ifdef debugInfo
             Serial.print(" Port: ");
             Serial.print(portAddress, BIN);
             Serial.print(" ");
             Serial.print(echoTravel);
             Serial.print("us ");;
-            Serial.print((float) map(echoTravel, 1000, 4600, 2000, 8200) * 0.01);
+            Serial.print(distance);
             Serial.print("cm ");
             Serial.println();
 #endif
             Data.print(portAddress, BIN);
             Data.print(" ");
-            Data.print((float) map(echoTravel, 1000, 4600, 2000, 8200) * 0.01);
+            Data.print(distance);
             Data.print(" ");
 
             echoTravel = 0;
