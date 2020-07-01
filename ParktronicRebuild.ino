@@ -1,7 +1,17 @@
 
 #include <Arduino.h>
+#include <SendOnlySoftwareSerial.h>
 
-//#define PRINT_MICROS
+#ifndef SendOnlySoftwareSerial_h
+
+#include "../libraries/SendOnlySoftwareSerial/SendOnlySoftwareSerial.h"
+
+#endif
+
+
+
+#define debugInfo
+const uint8_t pinDataTx = A2;
 const uint8_t pinCnlInA = 10; // control port A
 const uint8_t pinCnlInB = 11; // control port B
 const uint8_t pinOffLft = 12; // disable left
@@ -16,7 +26,7 @@ volatile uint8_t index;
 volatile unsigned long echoTravel = 0;
 volatile unsigned long now = 0, start = 0;
 const uint16_t debounceDelay = 980;//780;
-byte portContainer;
+byte portAddress;
 int8_t portPosition;
 
 
@@ -48,58 +58,62 @@ H X X switches off
  */
 
 void controlPorts() {
-    portContainer = B0000;
+    portAddress = B0000;
 
     switch (portPosition) {
         default:
         case 0:
-            bitSet(portContainer, 2);
+            bitSet(portAddress, 2);
         case 1:
-            bitSet(portContainer, 0);
-            bitSet(portContainer, 2);
+            bitSet(portAddress, 0);
+            bitSet(portAddress, 2);
             break;
         case 2:
-            bitSet(portContainer, 1);
-            bitSet(portContainer, 2);
+            bitSet(portAddress, 1);
+            bitSet(portAddress, 2);
             break;
         case 3:
-            bitSet(portContainer, 0);
-            bitSet(portContainer, 1);
-            bitSet(portContainer, 2);
+            bitSet(portAddress, 0);
+            bitSet(portAddress, 1);
+            bitSet(portAddress, 2);
             break;
         case 4:
-            bitSet(portContainer, 3);
+            bitSet(portAddress, 3);
             break;
         case 5:
-            bitSet(portContainer, 0);
-            bitSet(portContainer, 3);
+            bitSet(portAddress, 0);
+            bitSet(portAddress, 3);
             break;
         case 6:
-            bitSet(portContainer, 1);
-            bitSet(portContainer, 3);
+            bitSet(portAddress, 1);
+            bitSet(portAddress, 3);
             break;
         case 7:
-            bitSet(portContainer, 0);
-            bitSet(portContainer, 1);
-            bitSet(portContainer, 3);
+            bitSet(portAddress, 0);
+            bitSet(portAddress, 1);
+            bitSet(portAddress, 3);
             break;
     }
 
 
-    digitalWrite(pinCnlInA, (portContainer >> 0) & 1);
-    digitalWrite(pinCnlInB, (portContainer >> 1) & 1);
-    digitalWrite(pinOffLft, (portContainer >> 2) & 1);
-    digitalWrite(pinOffRgh, (portContainer >> 3) & 1);
+    digitalWrite(pinCnlInA, (portAddress >> 0) & 1);
+    digitalWrite(pinCnlInB, (portAddress >> 1) & 1);
+    digitalWrite(pinOffLft, (portAddress >> 2) & 1);
+    digitalWrite(pinOffRgh, (portAddress >> 3) & 1);
     portPosition++;
     if (portPosition > 7) portPosition = 0;
 }
 
+//
+// Create UART send data
+SendOnlySoftwareSerial Data(pinDataTx);
 
 void setup() {
+#ifdef debugInfo
     Serial.begin(115200);
-#ifdef PRINT_MICROS
     Serial.println("Begin .. ..  ");
 #endif
+    Data.begin(9600);
     pinMode(pinBurstCm, OUTPUT);
     pinMode(pinCnlInA, OUTPUT);
     pinMode(pinCnlInB, OUTPUT);
@@ -114,8 +128,9 @@ void setup() {
 
 
 void loop() {
-
+#ifdef debugInfo
     terminal();
+#endif
     echoTravel = 0;
     controlPorts();
     for (index = 0; index < 8; ++index) {
@@ -133,16 +148,22 @@ void loop() {
         if (pinState == LOW && gap > 20) {
 
             echoTravel = gap + debounceDelay;
-#ifdef PRINT_MICROS
-            Serial.print(echoTravel);
-            Serial.print("us ");
-#endif
-            Serial.print(portContainer, BIN);
+#ifdef debugInfo
+            Serial.print(" Port: ");
+            Serial.print(portAddress, BIN);
             Serial.print(" ");
+            Serial.print(echoTravel);
+            Serial.print("us ");;
             Serial.print((float) map(echoTravel, 1000, 4600, 2000, 8200) * 0.01);
+            Serial.print("cm ");
+            Serial.println();
+#endif
+            Data.print(portAddress, BIN);
+            Data.print(" ");
+            Data.print((float) map(echoTravel, 1000, 4600, 2000, 8200) * 0.01);
+            Data.print(" ");
 
             echoTravel = 0;
-            Serial.println();
             break;
         }
     }
