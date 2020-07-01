@@ -1,7 +1,7 @@
 
 #include <Arduino.h>
 
-#define PRINT_MICROS
+//#define PRINT_MICROS
 const uint8_t pinCnlInA = 10; // control port A
 const uint8_t pinCnlInB = 11; // control port B
 const uint8_t pinOffLft = 12; // disable left
@@ -15,7 +15,7 @@ const uint8_t pinBurstCm = 3; // common burst pin
 volatile uint8_t index;
 volatile unsigned long echoTravel = 0;
 volatile unsigned long now = 0, start = 0;
-const uint16_t debounceDelay = 780;//780;
+const uint16_t debounceDelay = 980;//780;
 byte portContainer;
 int8_t portPosition;
 
@@ -123,13 +123,14 @@ void loop() {
         analogWrite(pinBurstCm, 0);
         delayMicroseconds(6);
     }
+
     delayMicroseconds(debounceDelay);
     start = micros();
-    while (start + 10000 > now) {
+    while (start + 16500 > now) {
         uint8_t pinState = digitalRead(pinEchoRes);
         now = micros();
         uint16_t gap = now - start;
-        if (pinState == LOW) {
+        if (pinState == LOW && gap > 20) {
 
             echoTravel = gap + debounceDelay;
 #ifdef PRINT_MICROS
@@ -141,10 +142,10 @@ void loop() {
             Serial.print((float) map(echoTravel, 1000, 4600, 2000, 8200) * 0.01);
 
             echoTravel = 0;
+            Serial.println();
             break;
         }
     }
-    Serial.println();
-    delay(10);
+    delay(15);
 
 }
