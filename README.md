@@ -8,5 +8,5 @@ In this project I will rebuild the "Brain" for cheap parking sensors that comes 
  
  **Project Note**
  
- This should be a very simple project, remove the IC from the board, solder wires from IC socket to Arduino and upload the code.
+ This should be a very simple project, remove the IC from the board, solder wires from IC socket to Arduino (as showed on scheme file) and upload the code.
  
